@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "../../assets/css/responsive.css";
-
 @layer base {
   html {
     scroll-behavior: smooth;
