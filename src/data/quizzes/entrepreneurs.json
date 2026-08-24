@@ -1,0 +1,32 @@
+[
+  {
+    "question": "Какой компьютер IBM задал стандарт архитектуры PC-совместимых машин?",
+    "options": ["IBM PC 5150", "IBM Portable PC 5155", "IBM ThinkPad", "IBM PS/2"],
+    "correct": 0
+  },
+  {
+    "question": "Какая компания выпустила первый массовый портативный компьютер, совместимый с IBM PC?",
+    "options": ["Compaq", "Apple", "IBM", "Dell"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Commodore отличался агрессивной ценовой политикой?",
+    "options": ["Commodore 64", "Apple I", "IBM PC 5150", "Sinclair ZX Spectrum"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер начал эпоху мультимедиа в домашних ПК?",
+    "options": ["Amiga 500", "IBM PC 5150", "Apple IIe", "Sinclair ZX81"],
+    "correct": 0
+  },
+  {
+    "question": "Какой планшетный компьютер от Fujitsu Siemens работал на Windows XP?",
+    "options": ["Stylistic ST5020", "iPad", "Samsung Galaxy Tab", "ThinkPad X1 Tablet"],
+    "correct": 0
+  },
+  {
+    "question": "Какой процессор использовался в российском компьютере Эльбрус 801-PC?",
+    "options": ["Эльбрус (VLIW)", "Intel Core", "AMD Ryzen", "ARM Cortex"],
+    "correct": 0
+  }
+]

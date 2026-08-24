@@ -1,0 +1,37 @@
+[
+  {
+    "question": "Как назывался первый компьютер Apple, выпущенный в 1976 году?",
+    "options": ["Apple I", "Apple II", "Macintosh", "iMac"],
+    "correct": 0
+  },
+  {
+    "question": "Какая модель iMac получила прозвище «настольная лампа» за свой дизайн?",
+    "options": ["iMac G4", "iMac G3", "iMac G5", "Mac mini"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Apple был первым, выпущенным без встроенного дисплея и клавиатуры?",
+    "options": ["Mac mini", "Macintosh Classic", "iMac G3", "PowerBook G4"],
+    "correct": 0
+  },
+  {
+    "question": "В каком году был представлен iMac G3 с полупрозрачным корпусом?",
+    "options": ["1998", "1999", "2000", "1997"],
+    "correct": 0
+  },
+  {
+    "question": "Какой из этих компьютеров Apple использовал процессор PowerPC G5?",
+    "options": ["iMac G5", "iMac G4", "Macintosh Classic", "Apple IIe"],
+    "correct": 0
+  },
+  {
+    "question": "Какая модель Macintosh стала самой доступной в семействе при цене от $999?",
+    "options": ["Macintosh Classic", "iMac G3", "Mac mini", "Apple IIe"],
+    "correct": 0
+  },
+  {
+    "question": "На какой рабочей станции Тим Бернерс-Ли создал первый www-сервер?",
+    "options": ["NeXTcube", "Apple I", "IBM PC 5150", "Commodore 64"],
+    "correct": 0
+  }
+]

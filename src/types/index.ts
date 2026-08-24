@@ -49,26 +49,30 @@ export interface Route {
   id: string;
   title: string;
   description: string;
-  category: "history" | "games" | "technology";
-  duration: string;
-  icon: string;
-  exhibitIds: string[];
+  exhibits: number[];
 }
 
 export interface Exhibit {
-  id: string;
-  title: string;
-  formal: string;
-  informal: string;
-  byProfession: Partial<Record<Profession, string>>;
-  byHobby: Partial<Record<Hobby, string>>;
-  interactives: { id: string; label: string; content: string }[];
+  id: number;
+  name: string;
+  year: string;
+  country: string;
+  shortDescription: string;
+  fullDescription: string;
+  image: string;
+  category: string[];
 }
 
 export interface PostTourQuestion {
   id: string;
   question: string;
   options: { id: string; text: string; correct: boolean }[];
+}
+
+export interface TourQuestion {
+  question: string;
+  options: string[];
+  correct: number;
 }
 
 export interface Reward {
@@ -83,4 +87,13 @@ export interface TourState {
   routeId: string;
   exhibitIndex: number;
   timerDone: boolean;
+  visitedExhibits: number;
+}
+
+export interface QuizResult {
+  score: number;
+  correct: number;
+  total: number;
+  rewards: string[];
+  completedAt: string;
 }

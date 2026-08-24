@@ -1,0 +1,32 @@
+[
+  {
+    "question": "Какой сервер Яндекса работал на операционной системе FreeBSD?",
+    "options": ["Первый сервер Яндекса", "IBM PC 5150", "NeXTcube", "Эльбрус 801-PC"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Apple 1976 года был одноплатной системой для энтузиастов?",
+    "options": ["Apple I", "Apple IIe", "Macintosh Classic", "iMac G3"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Commodore стал самым продаваемым в мире?",
+    "options": ["Commodore 64", "Commodore PET", "Amiga 500", "Commodore VIC-20"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Sinclair поддерживал цветную графику?",
+    "options": ["ZX Spectrum", "ZX80", "ZX81", "Sinclair QL"],
+    "correct": 0
+  },
+  {
+    "question": "Какой советский компьютер стал символом школьной информатики 1980-х?",
+    "options": ["Агат-7", "Электроника БК 0010", "ДВК-3", "EC 1841"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер IBM 1981 года задал стандарт PC-архитектуры?",
+    "options": ["IBM PC 5150", "IBM Portable PC 5155", "IBM ThinkPad", "IBM PS/2"],
+    "correct": 0
+  }
+]

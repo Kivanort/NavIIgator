@@ -1,0 +1,37 @@
+[
+  {
+    "question": "Сколько экземпляров Commodore 64 было продано по данным Книги рекордов Гиннесса?",
+    "options": ["От 12,5 до 17 миллионов", "5 миллионов", "50 миллионов", "1 миллион"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Sinclair поддерживал работу с цветом, на что намекала полоска радуги на корпусе?",
+    "options": ["ZX Spectrum", "ZX80", "ZX81", "Sinclair QL"],
+    "correct": 0
+  },
+  {
+    "question": "Какая модель Sinclair QL расшифровывалась как Quantum Leap — квантовый скачок?",
+    "options": ["Sinclair QL", "Sinclair ZX81", "Sinclair ZX Spectrum", "Sinclair ZX80"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Amstrad CPC 464 был моноблоком со встроенным монитором?",
+    "options": ["Amstrad CPC 464", "Sinclair ZX Spectrum", "Commodore 64", "Dragon 32"],
+    "correct": 0
+  },
+  {
+    "question": "Какой 8-битный компьютер был известен встроенным синтезатором речи?",
+    "options": ["Dragon 32", "Commodore 64", "Sinclair ZX Spectrum", "Amstrad CPC 464"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Atari использовал процессор Motorola 68000?",
+    "options": ["Atari 520ST", "Atari 130XE", "Atari 2600", "Atari Lynx"],
+    "correct": 0
+  },
+  {
+    "question": "Какой японский 8-битный компьютер Sony поддерживал японские шрифты?",
+    "options": ["Sony HB-F700P", "Sony PlayStation", "Sony VAIO", "Sony Walkman"],
+    "correct": 0
+  }
+]

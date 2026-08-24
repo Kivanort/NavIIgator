@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -25,6 +26,14 @@ const config: Config = {
             600: "#333333",
           },
         },
+        dark: {
+          bg: "#0f172a",
+          card: "#1e293b",
+          input: "#334155",
+          border: "#475569",
+          text: "#f1f5f9",
+          muted: "#94a3b8",
+        },
       },
       fontFamily: {
         sans: [
@@ -40,6 +49,10 @@ const config: Config = {
         card: "0 2px 16px rgba(0, 0, 0, 0.06)",
         "card-hover": "0 8px 32px rgba(0, 0, 0, 0.12)",
         header: "0 1px 0 rgba(0, 0, 0, 0.06)",
+        "dark-card": "0 4px 24px rgba(0, 0, 0, 0.4)",
+        "dark-card-hover": "0 8px 32px rgba(0, 0, 0, 0.6)",
+        "dark-glow": "0 0 20px rgba(252, 63, 29, 0.15)",
+        "dark-header": "0 1px 0 rgba(51, 65, 85, 0.5)",
       },
     },
   },

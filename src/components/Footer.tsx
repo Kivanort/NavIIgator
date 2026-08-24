@@ -1,21 +1,28 @@
 "use client";
 
-import { NavBrand } from "./NavBrand";
+import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
-export function Footer() {
+export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="mt-auto border-t border-yandex-gray-200 bg-yandex-gray-50 py-10">
-      <div className="mx-auto max-w-4xl px-4 text-center">
-        <p className="text-lg">
-          <NavBrand />
-          <span className="text-yandex-gray-500"> × Яндекс Музей</span>
+    <footer className="border-t border-gray-200 dark:border-dark-border/40 bg-white dark:bg-dark-bg py-6 transition-colors duration-300">
+      <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-dark-muted">
+        <p>
+          © {new Date().getFullYear()} NavIIgator — {t("footer.about")}
         </p>
-        <p className="mt-2 text-sm text-yandex-gray-500">
-          {t("footer.about")}
-        </p>
+        <div className="mt-2 flex justify-center gap-4">
+          <Link href="/about" className="hover:text-yandex-red transition-colors">
+            {t("nav.about")}
+          </Link>
+          <Link href="/address" className="hover:text-yandex-red transition-colors">
+            {t("nav.address")}
+          </Link>
+          <Link href="/support" className="hover:text-yandex-red transition-colors">
+            {t("nav.supportDevs")}
+          </Link>
+        </div>
       </div>
     </footer>
   );

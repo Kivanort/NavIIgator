@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { RouteIcon } from "./Icons";
 import { Button } from "./Button";
 import type { Route } from "@/types";
 
@@ -28,17 +27,14 @@ export function RouteCard({ route }: { route: Route }) {
     <motion.article
       whileHover={{ y: -6 }}
       transition={{ duration: 0.25 }}
-      className="flex flex-col overflow-hidden rounded-2xl border border-yandex-gray-200 bg-white shadow-card transition-shadow hover:shadow-card-hover"
+      className="flex flex-col overflow-hidden rounded-2xl border border-yandex-gray-200 dark:border-dark-border/50 bg-white dark:bg-dark-card shadow-card dark:shadow-dark-card transition-all hover:shadow-card-hover dark:hover:shadow-dark-card-hover"
     >
-      <div className="flex items-center justify-center bg-yandex-gray-50 p-8 text-yandex-red">
-        <RouteIcon name={route.icon} />
-      </div>
       <div className="flex flex-1 flex-col p-6">
-        <span className="mb-2 inline-block w-fit rounded-full bg-yandex-gray-100 px-3 py-1 text-xs font-semibold text-yandex-gray-500">
-          {route.duration}
+        <span className="mb-2 inline-block w-fit rounded-full bg-yandex-gray-100 dark:bg-dark-input px-3 py-1 text-xs font-semibold text-yandex-gray-500 dark:text-dark-muted">
+          {route.exhibits.length} {route.exhibits.length === 1 ? "экспонат" : "экспонатов"}
         </span>
-        <h3 className="mb-2 text-xl font-extrabold tracking-tight">{route.title}</h3>
-        <p className="mb-6 flex-1 text-sm leading-relaxed text-yandex-gray-500">{route.description}</p>
+        <h3 className="mb-2 text-xl font-extrabold tracking-tight dark:text-dark-text">{route.title}</h3>
+        <p className="mb-6 flex-1 text-sm leading-relaxed text-yandex-gray-500 dark:text-dark-muted">{route.description}</p>
         <Button className="w-full" onClick={handleStart}>
           {t("card.startRoute")}
         </Button>

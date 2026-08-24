@@ -2,7 +2,7 @@
   "questions": [
     {
       "id": "q1",
-      "question": "Lorem ipsum: какой экспонат связан с QWERTY?",
+      "question": "Какой экспонат связан с раскладкой QWERTY?",
       "options": [
         { "id": "a", "text": "Пишущая машинка Remington", "correct": true },
         { "id": "b", "text": "VR-шлем", "correct": false },
@@ -11,7 +11,7 @@
     },
     {
       "id": "q2",
-      "question": "Lorem ipsum: в каком году вышел Pac-Man?",
+      "question": "В каком году вышел аркадный автомат Pac-Man?",
       "options": [
         { "id": "a", "text": "1975", "correct": false },
         { "id": "b", "text": "1980", "correct": true },
@@ -20,16 +20,16 @@
     },
     {
       "id": "q3",
-      "question": "Lorem ipsum: что такое ENIAC?",
+      "question": "Что такое ENIAC?",
       "options": [
-        { "id": "a", "text": "Первый универсальный компьютер", "correct": true },
+        { "id": "a", "text": "Первый универсальный электронный компьютер", "correct": true },
         { "id": "b", "text": "Первая игровая консоль", "correct": false },
         { "id": "c", "text": "Первый смартфон", "correct": false }
       ]
     },
     {
       "id": "q4",
-      "question": "Lorem ipsum: какой компьютер — советский ПК 1984 года?",
+      "question": "Какой компьютер был советским клоном Apple II?",
       "options": [
         { "id": "a", "text": "Macintosh", "correct": false },
         { "id": "b", "text": "«Агат»", "correct": true },

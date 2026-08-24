@@ -1,0 +1,37 @@
+[
+  {
+    "question": "На каком сервере работала поисковая система Яндекс-Web?",
+    "options": ["Первый сервер Яндекса (FreeBSD)", "IBM PC 5150", "NeXTcube", "Эльбрус 801-PC"],
+    "correct": 0
+  },
+  {
+    "question": "Какая программа-справочник стала предком поисковой системы Яндекса?",
+    "options": ["Поиск по Библии", "Google Search", "Яндекс.Картинки", "Mail.ru Search"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Commodore стал самым продаваемым 8-битным в мире?",
+    "options": ["Commodore 64", "Commodore PET", "Amiga 500", "Commodore VIC-20"],
+    "correct": 0
+  },
+  {
+    "question": "Как назывался первый массовый компьютер с раскладкой QWERTY?",
+    "options": ["IBM PC 5150", "Apple I", "Sinclair ZX Spectrum", "Commodore 64"],
+    "correct": 0
+  },
+  {
+    "question": "Какой советский компьютер был архитектурно похож на Apple II?",
+    "options": ["Агат-7", "Электроника БК 0010", "ДВК-3", "EC 1841"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер стандарта MSX2 поставлялся в советские школы?",
+    "options": ["Yamaha YIS-503IIIR", "Sinclair ZX Spectrum", "Amstrad CPC 464", "Commodore 64"],
+    "correct": 0
+  },
+  {
+    "question": "На каком языке программирования работал «Поиск по Библии» — сооснователь Яндекса отрабатывал на нём обратный индекс?",
+    "options": ["Неизвестно ( getInfo не указан)", "BASIC", "C", "Pascal"],
+    "correct": 0
+  }
+]

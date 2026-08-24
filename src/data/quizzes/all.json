@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Какой компьютер 1976 года стал первым в линейке Apple?",
+    "options": ["Apple I", "Apple IIe", "Macintosh", "iMac"],
+    "correct": 0
+  },
+  {
+    "question": "Какой сервер Яндекса работал на FreeBSD и загружался с компакт-диска Windows 3.1?",
+    "options": ["Первый сервер Яндекса", "IBM PC 5150", "NeXTcube", "Эльбрус 801-PC"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Commodore занесён в Книгу рекордов Гиннесса как самый продаваемый?",
+    "options": ["Commodore 64", "Commodore PET", "Amiga 500", "Commodore VIC-20"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер Sinclair поддерживал работу с цветом?",
+    "options": ["ZX Spectrum", "ZX80", "ZX81", "Sinclair QL"],
+    "correct": 0
+  },
+  {
+    "question": "Какой советский компьютер был архитектурно похож на Apple II?",
+    "options": ["Агат-7", "Электроника БК 0010", "ДВК-3", "EC 1841"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер IBM 1981 года задал стандарт PC-архитектуры?",
+    "options": ["IBM PC 5150", "IBM Portable PC 5155", "IBM ThinkPad", "IBM PS/2"],
+    "correct": 0
+  },
+  {
+    "question": "Какой компьютер NeXT Cube был основан компанией Стива Джобса?",
+    "options": ["NeXTcube", "Apple I", "IBM PC 5150", "Commodore 64"],
+    "correct": 0
+  },
+  {
+    "question": "Какой робот-доставщик Яндекса показали миру 7 ноября 2019 года?",
+    "options": ["Робот-доставщик 1-го поколения", "Робот-пылесос", "Дрон доставки", "Робот- официант"],
+    "correct": 0
+  }
+]

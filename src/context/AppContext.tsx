@@ -45,10 +45,12 @@ interface AppContextValue {
   tour: TourState | null;
   startTour: (routeId: string) => void;
   nextExhibit: () => void;
+  prevExhibit: () => void;
   setTimerDone: (done: boolean) => void;
   resetTour: () => void;
   resetAll: () => void;
   getRouteExhibits: (routeId: string) => Exhibit[];
+  finishTour: () => void;
   showAiToast: boolean;
   setShowAiToast: (v: boolean) => void;
   pendingRouteId: string | null;
@@ -64,8 +66,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
-  const routes = routesData.routes as Route[];
-  const exhibits = exhibitsData.exhibits as Exhibit[];
+  const routes = routesData as Route[];
+  const exhibits = exhibitsData as Exhibit[];
   const rewards = rewardsData.rewards as Reward[];
 
   /** Загрузка профиля с TTL 2 минуты */
@@ -157,7 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (routeId: string) => {
       const route = routes.find((r) => r.id === routeId);
       if (!route) return [];
-      return route.exhibitIds
+      return route.exhibits
         .map((id) => exhibits.find((e) => e.id === id))
         .filter(Boolean) as Exhibit[];
     },
@@ -165,12 +167,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   const startTour = useCallback((routeId: string) => {
-    setTour({ routeId, exhibitIndex: 0, timerDone: false });
+    setTour({ routeId, exhibitIndex: 0, timerDone: false, visitedExhibits: 1 });
   }, []);
 
   const nextExhibit = useCallback(() => {
     setTour((prev) =>
-      prev ? { ...prev, exhibitIndex: prev.exhibitIndex + 1, timerDone: false } : prev
+      prev
+        ? {
+            ...prev,
+            exhibitIndex: prev.exhibitIndex + 1,
+            timerDone: false,
+            visitedExhibits: Math.max(prev.visitedExhibits, prev.exhibitIndex + 2),
+          }
+        : prev
+    );
+  }, []);
+
+  const prevExhibit = useCallback(() => {
+    setTour((prev) =>
+      prev && prev.exhibitIndex > 0
+        ? { ...prev, exhibitIndex: prev.exhibitIndex - 1, timerDone: false }
+        : prev
     );
   }, []);
 
@@ -179,6 +196,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resetTour = useCallback(() => setTour(null), []);
+
+  const finishTour = useCallback(() => {
+    setTour(null);
+    localStorage.removeItem(TOUR_KEY);
+  }, []);
 
   const resetAll = useCallback(() => {
     setProfile(defaultProfile);
@@ -200,10 +222,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         tour,
         startTour,
         nextExhibit,
+        prevExhibit,
         setTimerDone,
         resetTour,
         resetAll,
         getRouteExhibits,
+        finishTour,
         showAiToast,
         setShowAiToast,
         pendingRouteId,
