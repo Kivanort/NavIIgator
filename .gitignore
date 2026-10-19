@@ -2,6 +2,7 @@
 /.next/
 /out/
 /build
+/bundle/
 .DS_Store
 *.pem
 npm-debug.log*

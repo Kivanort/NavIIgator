@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readJsonBody, RequestBodyError } from "@/lib/request-body";
 
 function cleanName(raw: unknown): string {
   if (!raw || typeof raw !== "string") return "Гость";
@@ -18,13 +19,19 @@ function cleanAge(raw: unknown): number {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await readJsonBody(request, 4096);
+    const body = parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? parsed as Record<string, unknown>
+      : {};
 
     const name = cleanName(body.name);
     const age = cleanAge(body.age);
 
     return NextResponse.json({ name, age });
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestBodyError && error.status === 413) {
+      return NextResponse.json({ error: "Request body too large" }, { status: 413 });
+    }
     return NextResponse.json({ name: "Гость", age: 25 });
   }
 }

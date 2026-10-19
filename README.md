@@ -2,6 +2,8 @@
 
 Интерактивный гид-путеводитель по Яндекс Музею с AI-чатом на основе Yandex GPT, персональными маршрутами, викторинами и наградами.
 
+Работающее приложение: **[naviigator.apps.teslaistra.ru](https://naviigator.apps.teslaistra.ru/)**.
+
 ## 🚀 Основные возможности
 
 - **Опросник** — адаптивный квиз из 7 шагов, определяет интересы пользователя и подбирает персональный маршрут
@@ -19,12 +21,13 @@
 
 | Технология | Версия | Назначение |
 |---|---|---|
-| Next.js | 14.2 | Framework (App Router) |
-| React | 18.3 | UI-компоненты |
+| Next.js | 15.5.28 | Framework (App Router) |
+| React | 19.3.1 | UI-компоненты |
 | TypeScript | 5.6 | Типизация |
 | Tailwind CSS | 3.4 | Стилизация |
 | Framer Motion | 11.11 | Анимации |
 | Yandex GPT | API | AI-генерация ответов |
+| Node.js | 22 | Сервер приложения и сборка |
 | Docker | — | Деплой и контейнеризация |
 
 ## ⚡ Быстрый старт
@@ -39,7 +42,7 @@ cd NavIIgator
 ### Установка зависимостей
 
 ```bash
-npm install
+npm ci
 ```
 
 ### Настройка переменных окружения
@@ -47,10 +50,12 @@ npm install
 Создайте файл `.env.local` в корне проекта:
 
 ```env
-YC_API_KEY=ваш_токен_Yandex_GPT
+YC_API_KEY=ваш_API_ключ
+# Необязательно: URI модели из каталога, доступного сервисному аккаунту
+# YC_MODEL_URI=gpt://<folder-id>/yandexgpt/latest
 ```
 
-> Получить API-ключ можно в [Yandex Cloud Console](https://console.cloud.yandex.ru/) → IAM → API-ключи.
+> Создайте API-ключ сервисного аккаунта с областью `yc.ai.languageModels.execute` и ролью `ai.languageModels.user` на нужном каталоге. Сохраните `.env.local` с правами `600`; этот файл исключён из Git и Docker build context. Ключ нужен только серверу во время работы чата.
 
 ### Запуск в режиме разработки
 
@@ -117,27 +122,58 @@ src/data/
 
 🔗 [Sticker Pack в Telegram](https://t.me/addstickers/navIIgator)
 
-## 🚢 Деплой
+## 🚢 Автоматический CI/CD
 
-### VPS + Docker (рекомендуемый)
+Публичное приложение работает на домашнем сервере в отдельном Compose-проекте `museum-school-team-3`. GitHub Actions проверяет изменения и публикует готовый образ; сервер получает сборку через исходящее HTTPS-соединение.
 
-1. Установите Docker и Docker Compose на сервер
-2. Клонируйте репозиторий и создайте `.env.local` с `YC_API_KEY`
-3. Запустите:
+### Что происходит после изменения кода
+
+1. Откройте pull request в `main`. Workflow [CI and Publish Home Release](https://github.com/Kivanort/NavIIgator/actions/workflows/deploy.yml) установит зависимости через `npm ci`, проверит типы и production-зависимости, соберёт Linux/amd64 Docker-образ и выполнит HTTP smoke-проверки приложения. Ошибка любого обязательного шага завершает CI с ошибкой.
+2. После слияния в `main` эти проверки выполняются снова для точного commit SHA. Успешная сборка публикуется в [GitHub Releases](https://github.com/Kivanort/NavIIgator/releases) как `home-<полный-SHA>` с двумя файлами: `naviigator-image.tar.gz` и `deploy-manifest.json`. В manifest записаны commit, ID и попытка запуска Actions, image ID, размер и SHA-256 архива.
+3. Домашний сервер проверяет `main` каждые пять минут. Он принимает сборку только от завершившегося успешного запуска этого workflow для текущего commit в `main`, проверяет manifest, контрольную сумму и метки образа. Pull request и сборки других веток на сайт не попадают.
+4. Перед переключением сервер сохраняет резервную копию и проверяет новый образ в отдельном тестовом контейнере. Затем обновляет только сервис приложения и проверяет healthcheck, публичный HTTPS и AI-чат.
+5. При неудачном переключении восстанавливается предыдущий образ. Повторная установка неудачного commit требует команды `retry` или нового commit в `main`.
+
+Сборка обычно появляется на сайте в течение нескольких минут после зелёного CI; к времени GitHub Actions добавляется до пяти минут ожидания серверного таймера. Зелёный workflow подтверждает публикацию сборки. Фактически работающую версию показывает [`/api/healthz`](https://naviigator.apps.teslaistra.ru/api/healthz): поле `revision` содержит commit SHA.
+
+Для повторного запуска откройте **Actions → CI and Publish Home Release → Run workflow**, выберите `main` и запустите workflow. Если этот commit уже работает на сервере, повторная сборка не вызывает лишнего переключения.
+
+### Секреты и права
+
+`YC_API_KEY` хранится на сервере в закрытом файле `/srv/services/museum-school/team-3/config/runtime.env` с владельцем root и правами `600`. `YC_MODEL_URI` можно задать в том же файле. GitHub Actions собирает приложение без AI-ключа; проверки CI используют ответы приложения без настроенного AI. Настоящий AI-запрос проверяется сервером при развёртывании.
+
+Workflow использует временный `GITHUB_TOKEN`: проверки имеют `contents: read`, публикация релиза — `contents: write`. Дополнительные repository secrets для этого CI/CD не нужны. Действия GitHub закреплены полными commit SHA. Сервер скачивает публичные сборки без GitHub credentials, а параметры Docker, секреты и код установщика управляются локальной конфигурацией администратора.
+
+### Проверка и управление на сервере
+
+Команды выполняются администратором на домашнем сервере:
 
 ```bash
-docker compose up -d --build
+# Проверить активную версию, предыдущую версию и состояние автообновления
+sudo /usr/local/libexec/naviigator/deploy.py status
+
+# Проверить таймер и журнал последней попытки
+sudo systemctl status naviigator-update.timer
+sudo journalctl -u naviigator-update.service -n 80 --no-pager
+
+# Проверить новые сборки сразу, не дожидаясь таймера
+sudo systemctl start naviigator-update.service
+
+# Повторить попытку установки текущего main после устранения ошибки
+sudo /usr/local/libexec/naviigator/deploy.py retry
 ```
 
-4. Настройте reverse proxy (Nginx/Caddy) на порт 3000
+### Откат и резервное копирование
 
-### GitHub Actions (CI/CD)
+```bash
+# Вернуться к предыдущему проверенному образу и приостановить автообновление
+sudo /usr/local/libexec/naviigator/deploy.py rollback
 
-Проект настроен на автоматический деплой через GitHub Actions:
+# Возобновить получение успешных сборок из main
+sudo /usr/local/libexec/naviigator/deploy.py resume
+```
 
-- При пуше в `main` собирается Docker-образ и пушится в GHCR
-- Автоматический деплой на сервер через SSH
-- Секреты: `YC_API_KEY`, `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`
+Резервное копирование выполняется перед переключением и ежедневно существующим `museum-school-team-3-backup.timer`. Копии содержат образ, runtime env и конфигурацию запуска; они хранятся в `/srv/backups/museum-school/team-3` с закрытыми правами. Исходные облачные ресурсы и прежние копии сохраняются. Пользовательский прогресс и история чата хранятся в браузере и в серверную копию не входят.
 
 ## 📁 Структура проекта
 
