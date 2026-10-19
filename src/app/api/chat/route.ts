@@ -1,9 +1,14 @@
 import { NextRequest } from "next/server";
 import { rateLimit } from "@/lib/rate-limit";
+import { readFile } from "node:fs/promises";
+import { readJsonBody, RequestBodyError } from "@/lib/request-body";
 
 const YANDEX_API_URL = "https://ai.api.cloud.yandex.net/v1/chat/completions";
-const YANDEX_MODEL = "gpt://b1gdlc1lblclo0jopj9n/yandexgpt/latest";
+const DEFAULT_YANDEX_MODEL = "gpt://b1gdlc1lblclo0jopj9n/yandexgpt/latest";
 const MAX_MESSAGE_LENGTH = 2000;
+const MAX_HISTORY_LENGTH = 50;
+
+export const runtime = "nodejs";
 
 interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -99,28 +104,38 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { messages, profileAnswers, language } = await request.json();
+    const body = await readJsonBody(request);
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      throw new RequestBodyError(400);
+    }
+    const { messages, profileAnswers = "", language = "ru" } = body as Record<string, unknown>;
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > MAX_HISTORY_LENGTH ||
+        messages.some((m) => !m || typeof m !== "object" ||
+          !["user", "assistant"].includes(m.role) || typeof m.content !== "string" ||
+          m.content.length === 0 || m.content.length > (m.role === "user" ? MAX_MESSAGE_LENGTH : 8000)) ||
+        messages[messages.length - 1].role !== "user" ||
+        typeof profileAnswers !== "string" || profileAnswers.length > 4000 ||
+        typeof language !== "string" || !["ru", "en", "kk", "sr"].includes(language)) {
       return Response.json(
-        { error: "messages array is required" },
+        { error: "Не удалось прочитать сообщение. Обновите страницу и попробуйте снова." },
         { status: 400 }
       );
     }
 
-    if (!process.env.YC_API_KEY) {
-      console.error("YC_API_KEY is not set");
+    let apiKey: string | undefined;
+    try {
+      apiKey = process.env.YC_API_KEY_FILE
+        ? (await readFile(process.env.YC_API_KEY_FILE, "utf8")).trim()
+        : process.env.YC_API_KEY?.trim();
+    } catch {
+      console.error("AI credential file is unavailable");
+    }
+    if (!apiKey) {
+      console.error("AI credential is not configured");
       return Response.json(
         { error: "AI-сервис не настроен. Обратитесь к администратору." },
-        { status: 500 }
-      );
-    }
-
-    const lastUserMsg = messages[messages.length - 1];
-    if (lastUserMsg?.role === "user" && lastUserMsg.content.length > MAX_MESSAGE_LENGTH) {
-      return Response.json(
-        { error: `Слишком длинное сообщение (максимум ${MAX_MESSAGE_LENGTH} символов).` },
-        { status: 400 }
+        { status: 503 }
       );
     }
 
@@ -141,31 +156,33 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.YC_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: YANDEX_MODEL,
+        model: process.env.YC_MODEL_URI || DEFAULT_YANDEX_MODEL,
         messages: apiMessages,
         stream: true,
         max_tokens: 1024,
         temperature: 0.7,
       }),
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(60_000)]),
+      cache: "no-store",
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Yandex GPT API error ${response.status}:`, errorText);
+      await response.body?.cancel();
+      console.error(`Yandex GPT API error ${response.status}`);
 
       if (response.status === 401) {
         return Response.json(
-          { error: "Невалидный ключ API. Обратитесь к администратору." },
-          { status: 401 }
+          { error: "AI-сервис временно недоступен. Попробуйте позже." },
+          { status: 503 }
         );
       }
 
       return Response.json(
         { error: "Ошибка при обращении к AI-сервису" },
-        { status: response.status >= 500 ? 502 : response.status }
+        { status: response.status === 429 ? 429 : 502 }
       );
     }
 
@@ -218,8 +235,11 @@ export async function POST(request: NextRequest) {
             }
           }
         } catch (err) {
-          console.error("Stream processing error:", err);
+          if (!(err instanceof Error && err.name === "AbortError")) {
+            console.error("AI stream ended unexpectedly");
+          }
         } finally {
+          await reader.cancel().catch(() => {});
           controller.close();
         }
       },
@@ -228,12 +248,18 @@ export async function POST(request: NextRequest) {
     return new Response(stream, {
       headers: {
         "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-store",
         Connection: "keep-alive",
       },
     });
   } catch (err) {
-    console.error("Chat API error:", err);
+    if (err instanceof RequestBodyError) {
+      return Response.json(
+        { error: err.status === 413 ? "Сообщение слишком большое. Сократите его и попробуйте снова." : "Не удалось прочитать сообщение. Обновите страницу и попробуйте снова." },
+        { status: err.status }
+      );
+    }
+    console.error("Chat API request failed");
     return Response.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

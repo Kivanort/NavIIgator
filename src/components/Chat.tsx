@@ -97,7 +97,7 @@ export function Chat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMessages,
+          messages: updatedMessages.filter((m) => !m.error && m.content).slice(-30),
           profileAnswers: getProfileAnswersString(profile),
           language: lang,
         }),
@@ -113,9 +113,6 @@ export function Chat() {
         }
         if (res.status === 429) {
           throw new Error("Слишком много запросов. Подождите минуту и попробуйте снова.");
-        }
-        if (res.status === 401 || detail.includes("API key")) {
-          throw new Error("Невалидный API-ключ. Проверьте .env.local.");
         }
         throw new Error(detail || `Ошибка AI-сервиса (${res.status})`);
       }
