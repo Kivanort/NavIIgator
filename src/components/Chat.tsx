@@ -13,6 +13,24 @@ interface Message {
   error?: boolean;
 }
 
+function loadHistory(): Message[] {
+  try {
+    const raw = localStorage.getItem("chatHistory");
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((entry): entry is Message => {
+      if (!entry || typeof entry !== "object") return false;
+      const message = entry as Partial<Message>;
+      return (message.role === "user" || message.role === "assistant") &&
+        typeof message.content === "string" && message.content.trim().length > 0 &&
+        message.content.length <= (message.role === "user" ? 2000 : 8000) &&
+        !message.error;
+    }).slice(-50).map(({ role, content }) => ({ role, content }));
+  } catch {
+    return [];
+  }
+}
+
 function getProfileAnswersString(
   profile: ReturnType<typeof useApp>["profile"]
 ): string {
@@ -35,6 +53,7 @@ export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [historyHydrated, setHistoryHydrated] = useState(false);
   const [chatMode, setChatMode] = useState<"pending" | "personalized" | "generic">(
     profile.name ? "personalized" : "pending"
   );
@@ -50,18 +69,11 @@ export function Chat() {
   }, [messages, scrollToBottom]);
 
   useEffect(() => {
-    if (chatMode === "pending") return;
-    try {
-      const stored = localStorage.getItem("chatHistory");
-      if (stored) {
-        const parsed = JSON.parse(stored) as Message[];
-        if (parsed.length > 0) {
-          setMessages(parsed.filter((m) => !m.error));
-          return;
-        }
-      }
-    } catch { /* ignore */ }
-    if (messages.length === 0) {
+    if (chatMode === "pending" || historyHydrated) return;
+    const stored = loadHistory();
+    if (stored.length > 0) {
+      setMessages(stored);
+    } else {
       const greeting =
         chatMode === "generic"
           ? profile.style === "formal"
@@ -72,15 +84,16 @@ export function Chat() {
             : `Привет, ${profile.name}! Я твой AI-гид по Яндекс Музее. Задавай вопросы или попроси подобрать маршрут!`;
       setMessages([{ role: "assistant", content: greeting }]);
     }
-  }, [chatMode, profile.name, profile.style, messages.length]);
+    setHistoryHydrated(true);
+  }, [chatMode, profile.name, profile.style, historyHydrated]);
 
   useEffect(() => {
-    if (chatMode === "pending" || messages.length === 0) return;
-    const toStore = messages.filter((m) => !m.error);
+    if (!historyHydrated || chatMode === "pending") return;
+    const toStore = messages.filter((m) => !m.error && m.content.trim());
     if (toStore.length > 0) {
       try { localStorage.setItem("chatHistory", JSON.stringify(toStore.slice(-50))); } catch { /* ignore */ }
     }
-  }, [messages, chatMode]);
+  }, [messages, chatMode, historyHydrated]);
 
   const sendMessage = useCallback(async (retryText?: string) => {
     const text = retryText ?? input.trim();
